@@ -143,8 +143,8 @@ export default {
     }
   },
   components: {
-    'send': require('modules/increment/support/Send.vue'),
-    'messages': require('modules/increment/support/Messages.vue')
+    'send': require('components/increment/support/Send.vue'),
+    'messages': require('components/increment/support/Messages.vue')
   },
   watch: {
     groupId: function(newVal, oldVal) { // watch it

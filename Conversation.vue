@@ -123,8 +123,8 @@ export default {
   },
   props: ['item'],
   components: {
-    'send': require('modules/increment/support/Send.vue'),
-    'messages': require('modules/increment/support/Messages.vue')
+    'send': require('components/increment/support/Send.vue'),
+    'messages': require('components/increment/support/Messages.vue')
   },
   methods: {
     redirect(parameter){

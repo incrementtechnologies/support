@@ -110,10 +110,10 @@ export default {
     }
   },
   components: {
-    'start': require('modules/increment/support/Start.vue'),
-    'previous': require('modules/increment/support/Previous.vue'),
-    'conversation': require('modules/increment/support/Conversation.vue'),
-    'new-conversation': require('modules/increment/support/NewConversation.vue')
+    'start': require('components/increment/support/Start.vue'),
+    'previous': require('components/increment/support/Previous.vue'),
+    'conversation': require('components/increment/support/Conversation.vue'),
+    'new-conversation': require('components/increment/support/NewConversation.vue')
   },
   methods: {
     redirect(parameter){
