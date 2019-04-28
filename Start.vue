@@ -2,7 +2,7 @@
   <div>
     <div class="messenger-header">
       <div class="messenger-logo">
-        <img src="../../assets/img/logo.png">
+        <img src="../../../assets/img/logo.png">
         <label><b>ID FACTORY</b></label>
       </div>
       <div class="messenger-info">
@@ -113,9 +113,9 @@
 }
 </style>
 <script>
-import ROUTER from '../../router'
-import AUTH from '../../services/auth'
-import CONFIG from '../../config.js'
+import ROUTER from '../../../router'
+import AUTH from '../../../services/auth'
+import CONFIG from '../../../config.js'
 import axios from 'axios'
 export default {
   mounted(){

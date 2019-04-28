@@ -91,9 +91,9 @@
 
 </style>
 <script>
-import ROUTER from '../../router'
-import AUTH from '../../services/auth'
-import CONFIG from '../../config.js'
+import ROUTER from '../../../router'
+import AUTH from '../../../services/auth'
+import CONFIG from '../../../config.js'
 import axios from 'axios'
 export default {
   mounted(){
@@ -110,10 +110,10 @@ export default {
     }
   },
   components: {
-    'start': require('modules/support/Start.vue'),
-    'previous': require('modules/support/Previous.vue'),
-    'conversation': require('modules/support/Conversation.vue'),
-    'new-conversation': require('modules/support/NewConversation.vue')
+    'start': require('modules/increment/support/Start.vue'),
+    'previous': require('modules/increment/support/Previous.vue'),
+    'conversation': require('modules/increment/support/Conversation.vue'),
+    'new-conversation': require('modules/increment/support/NewConversation.vue')
   },
   methods: {
     redirect(parameter){

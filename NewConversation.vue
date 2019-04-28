@@ -125,9 +125,9 @@
 }
 </style>
 <script>
-import ROUTER from '../../router'
-import AUTH from '../../services/auth'
-import CONFIG from '../../config.js'
+import ROUTER from '../../../router'
+import AUTH from '../../../services/auth'
+import CONFIG from '../../../config.js'
 import axios from 'axios'
 export default {
   mounted(){
@@ -143,8 +143,8 @@ export default {
     }
   },
   components: {
-    'send': require('modules/support/Send.vue'),
-    'messages': require('modules/support/Messages.vue')
+    'send': require('modules/increment/support/Send.vue'),
+    'messages': require('modules/increment/support/Messages.vue')
   },
   watch: {
     groupId: function(newVal, oldVal) { // watch it
