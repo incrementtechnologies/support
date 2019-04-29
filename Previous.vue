@@ -135,7 +135,7 @@ export default {
       this.$parent.conversationStatus = status
       this.$parent.group = item
       if(status === 'conversation'){
-        AUTH.support.messengerGroupId = item.last_message.messenger_group_id
+        AUTH.support.messengerGroupId = parseInt(item.last_message.messenger_group_id)
         AUTH.support.message = null
       }
     },
