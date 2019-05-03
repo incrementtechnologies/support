@@ -155,7 +155,8 @@ export default {
           }],
           sort: {
             created_at: 'desc'
-          }
+          },
+          account_id: this.user.userID
         }
       }else{
         parameter = {
@@ -166,7 +167,8 @@ export default {
           }],
           sort: {
             created_at: 'desc'
-          }
+          },
+          account_id: this.user.userID
         }
       }
       this.APIRequest('messenger_groups/retrieve_my_issue', parameter).then(response => {
