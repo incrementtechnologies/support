@@ -154,7 +154,7 @@ export default {
             clause: '='
           }],
           sort: {
-            created_at: 'desc'
+            updated_at: 'desc'
           },
           account_id: this.user.userID
         }
@@ -166,7 +166,7 @@ export default {
             clause: '='
           }],
           sort: {
-            created_at: 'desc'
+            updated_at: 'desc'
           },
           account_id: this.user.userID
         }
