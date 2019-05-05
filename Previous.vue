@@ -6,18 +6,18 @@
     </div>
     <div class="conversation-content" v-if="data !== null">
       <div class="item-row" v-for="item, index  in data" @click="changeConversationStatus('conversation', item)">
-        <div class="profile" v-if="item.last_message.account !== null">
-          <img :src="config.BACKEND_URL + item.last_message.account.profile.url" v-if="item.last_message.account.profile !== null">
+        <div class="profile" v-if="item.last_message.title !== null">
+          <img :src="config.BACKEND_URL + item.last_message.title.profile.url" v-if="item.last_message.title.profile !== null">
           <i class="fa fa-user-circle-o text-green" v-else></i>
         </div>
         <div class="details" v-if="item.last_message !== null">
-          <span class="top" v-if="item.last_message.account !== null">
-            <label>{{item.last_message.account.username}}</label>
+          <span class="top" v-if="item.last_message.title !== null">
+            <label>{{item.last_message.title.username}}</label>
             <label class="pull-right">{{item.last_message.created_at_human}}</label>
           </span>
           <span class="middle" >
-            <label v-if="item.last_message.message.length < 43">{{item.last_message.message}}</label>
-            <label v-else>{{item.last_message.message.substr(0,39)}}...</label>
+            <label v-if="item.last_message.description.length < 43">{{item.last_message.description}}</label>
+            <label v-else>{{item.last_message.description.substr(0,39)}}...</label>
           </span>
         </div>
       </div>

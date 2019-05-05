@@ -5,8 +5,8 @@
         <i class="fa fa-chevron-left"></i>
         <label class="badge badge-danger" style="margin-left: -1px;" v-if="auth.support.badge > 0">{{auth.support.badge}}</label>
       </label>
-      <div class="profile" v-if="item.last_message.account !== null">
-        <img :src="config.BACKEND_URL + item.last_message.account.profile.url" v-if="item.last_message.account.profile !== null">
+      <div class="profile" v-if="item.last_message.title !== null">
+        <img :src="config.BACKEND_URL + item.last_message.title.profile.url" v-if="item.last_message.title.profile !== null">
         <i class="fa fa-user-circle-o text-green" v-else></i>
       </div>
       <span class="details">
