@@ -50,7 +50,7 @@
   line-height: 60px;
 }
 .messenger-content{
-  height: 470px;
+  height: 65vh;
   width: 325px;
   border-radius: 10px;
   float: left;
@@ -88,7 +88,23 @@
   margin-left: 5%;
   font-size: 12px;
 }
-
+@media (max-width: 991px){
+  .support-messenger{
+    bottom: 5px;
+    right: 5px;
+    width: 90%;
+  }
+  .messenger-icon{
+    height: 50px;
+    width: 50px;
+  }
+  .messenger-icon i{
+    line-height: 50px;
+  }
+  .messenger-content{
+    height: 70vh;
+  }
+}
 </style>
 <script>
 import ROUTER from '../../../router'

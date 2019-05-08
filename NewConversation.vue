@@ -25,7 +25,7 @@
 .messenger-header{
   width: 100%;
   float: left;
-  height: 200px;
+  height: 30vh;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   background-image: linear-gradient(to bottom right, #ffffff, #22b173);
@@ -102,13 +102,13 @@
   cursor: pointer;
 }
 .conversation-content{
-  height: 270px;
+  height: 35vh;
   width: 100%;
   float: left;
   background: #fff;
 }
 .message-holder{
-  height: 210px;
+  height: 25vh;
   overflow-y: auto;
   width: 100%;
   float: left;
@@ -117,7 +117,7 @@
   flex-direction: column-reverse;
 }
 .input-holder{
-  height: 60px;
+  height: 10vh;
   width: 100%;
   float: left;
   background: #fff;

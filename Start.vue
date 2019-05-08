@@ -30,7 +30,7 @@
 .messenger-header{
   width: 100%;
   float: left;
-  height: 200px;
+  height: 40vh;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   background-image: linear-gradient(to bottom right, #ffffff, #22b173);
@@ -69,7 +69,7 @@
 }
 
 .conversation-start{
-  height: 120px;
+  height: 25vh;
   margin-right: 5%;
   margin-left: 5%;
   width: 90%;
@@ -110,6 +110,9 @@
 .previous:hover{
   text-decoration: underline;
   cursor: pointer;
+}
+@media (max-width: 991px){
+
 }
 </style>
 <script>
