@@ -3,7 +3,7 @@
     <div class="messenger-header">
       <div class="messenger-logo">
         <label class="back-icon" @click="changeConversationStatus('start')"><i class="fa fa-chevron-left"></i></label>
-        <label><b>ID FACTORY</b></label>
+        <label><b>{{config.APP_NAME}}</b></label>
       </div>
       <div class="messenger-info">
         <p>

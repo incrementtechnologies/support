@@ -3,7 +3,7 @@
     <div class="messenger-header">
       <div class="messenger-logo">
         <img src="../../../assets/img/logo.png">
-        <label><b>ID FACTORY</b></label>
+        <label><b>{{config.APP_NAME}}</b></label>
       </div>
       <div class="messenger-info">
         <h3 v-if="user.username.length < 20">Hi {{user.username}}!</h3>
