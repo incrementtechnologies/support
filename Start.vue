@@ -9,7 +9,7 @@
         <h3 v-if="user.username.length < 20">Hi {{user.username}}!</h3>
         <h3 v-else>Hi {{user.username.substr(0, 17)}}...!</h3>
         <p>
-          Hello! What question do you have about ID Factory? We'd love to help you.
+          Hello! What question do you have about {{config.APP_NAME}}? We'd love to help you.
         </p>
       </div>
     </div>
