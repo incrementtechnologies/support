@@ -109,7 +109,6 @@
   font-style: italic;
   font-weight: 500;
 }
-
 </style>
 <script>
 import ROUTER from '../../../router'
