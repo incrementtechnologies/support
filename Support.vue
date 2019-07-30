@@ -19,7 +19,8 @@
     </span>
   </div>
 </template>
-<style scoped>
+<style scoped lang="scss">
+@import "~assets/style/colors.scss";
 .support-messenger{
   min-width: 50px;
   min-height: 50px;
@@ -35,15 +36,15 @@
   width: 60px;
   float: right;
   border-radius: 50%;
-  background: #22b173;
+  background: $primary;
   color: #fff;
   text-align: center;
 }
 .messenger-icon:hover{
   cursor: pointer;
-  color: #22b173;
+  color: $primary;
   background: #fff;
-  border: solid 1px #22b173;
+  border: solid 1px $primary;
 }
 .messenger-icon i{
   font-size: 30px;
@@ -65,7 +66,7 @@
   margin-right: 10px;
   border-radius: 5px;
   float: left;
-  background: #22b173;
+  background: $primary;
   border: solid 1px #ddd;
   color: #fff;
 }

@@ -24,14 +24,15 @@
     </div>
   </div>
 </template>
-<style scoped>
+<style scoped lang="scss">
+@import "~assets/style/colors.scss";
 .messenger-header{
   width: 100%;
   float: left;
   height: 70px;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
-  background-image: linear-gradient(to right, #fffff0, #22b173);
+  background-image: linear-gradient(to right, #fffff0, $primary);
 }
 .messenger-header{
   line-height: 70px;
@@ -48,7 +49,7 @@
 }
 .back-icon:hover{
   border-radius: 5px;
-  background: #22b173;
+  background: $primary;
   cursor: pointer;
   color: #fff;
 }

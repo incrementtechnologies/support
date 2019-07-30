@@ -26,14 +26,15 @@
     </div>
   </div>
 </template>
-<style scoped>
+<style scoped lang="scss">
+@import "~assets/style/colors.scss";
 .messenger-header{
   width: 100%;
   float: left;
   height: 40vh;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
-  background-image: linear-gradient(to bottom right, #ffffff, #22b173);
+  background-image: linear-gradient(to bottom right, #ffffff, $primary);
 }
 .messenger-header .messenger-logo{
   height: 50px;
@@ -53,7 +54,7 @@
   line-height: 40px;
   font-size: 24px;
   margin-top: 5px;
-  color: #22b173;
+  color: $primary;
 }
 .messenger-header .messenger-info{
   float: left;
