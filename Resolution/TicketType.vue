@@ -10,6 +10,7 @@
         @mouseup="logSelectionWithinInput($event)"
         :value="ticketSearch"
         ref="selection"
+        style="width:100%"
         >
       <button 
         class="btn btn-light" 
