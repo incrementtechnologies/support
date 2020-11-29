@@ -1,45 +1,68 @@
 <template>
+<!-- style="background-color:red" -->
 <div id="holder"> 
   <div class="title" style="margin-top: 25px;">
     <label class="text-primary action-link" @click="redirect('/tickets')"><b> back </b>to previous</label>
   </div>
-  <span v-if="data != null">
-    <span id="title"><b>{{title}}</b>#{{data.id}}</span>
-      <br><span>{{status}} {{ timeIntervalRes + ' ago'}} by {{data.account_id}}</span>
-    </span>
-   <div class="row" >
-    <div class="col-10" id="detail">
+  <div v-if="data">
+    <span id="title"> <b> {{title}} </b> #{{data.id}} </span>
+    <br>
+    <span> {{status}} {{ timeIntervalRes + ' ago'}} by {{data.account_id}} </span>
+  </div>
+  <div class="row">
+    <span id="title"><b>Create Issue Ticket</b></span>
+  </div>
+  <div class="row">
+     <div class="col-md-9" id="detail">
       <form>
         <div class="form-group">
           <label for="text"><b>Title</b></label>
-          <input type="text" class="form-control" v-model="title" id="text">
+          <input type="text" class="form-control" v-model="title" placeholder="Enter ticket title" id="text">
         </div>
         <div class="form-group">
-          <label for="pwd"><b>Details</b></label>
-          <textarea type="password" v-model="detail" class="form-control"  id="pwd"/>
+          <label for="detail"><b>Details</b></label>
+          <textarea type="text" v-model="detail" placeholder="Enter ticket description"  class="form-control"  id="detail"/>
         </div>
-        <span><b>Image attachments</b></span><br>
-
-        <multiple-img-uploader  v-if="data != null" :imageList="imageList" :isEditableProp="editable"/>   
-        <button type="button" class="btn btn-primary" id="update">update</button>
-
+        <label><b>Image Attachment</b></label>
+        <div class="form-group">
+        <div id="imgListPreview" class="row">
+            <div 
+            v-for="index in imgListLimit" :key="index" 
+            id="imgPreview" 
+            class="col-3"
+            >
+            <!-- <span class="close">x</span> -->
+              <button type="button" class="btn btn-danger" id="deleteBtn" data-toggle="modal" data-target="#confirm-delete">
+                <i class="fa fa-times"></i>
+              </button>
+              <div v-if="imageList[index]">
+                <img :src="config.BACKEND_URL + imageList[index]" :alt="imageList[index]" style="width:100%;height:100%">
+              </div>
+              <div v-else id="imgNotExist">
+                <i class="fas fa-image"></i><br>
+                no image
+              </div>
+            </div>
+        </div></div>
+        <!-- <browse-images-modal :object="user.profile" v-if="user.profile !== null"></browse-images-modal> -->
+        <browse-images-modal  v-if="user.profile === null"></browse-images-modal>
+        <button class="btn btn-primary custom-block" style="margin-top: 5px;" @click="showImages()">Select from images
+        </button>                        
+        <button type="button" class="btn btn-primary" id="update">{{data ? 'update' : 'submit'}}</button>
       </form>
     </div>
-    <div class="col-2" id="uneditableDetail">
+    <div class="col-md-3 " id="uneditableDetail">
       <div>
-        <ticket-type v-if="data != null" :isEditable="{isEditable: user.userID === data.account_id, typeResult: data.type}"/>
-        <!-- <span>Label</span><br>
-        <button 
-        disabled 
-        :style="{backgroundColor: ticketTypeBackgroundColor(data.type), color: ticketTypeColor(data.type)}">
-         {{data.type}}
-        </button> -->
+        <ticket-type :isEditable="data ? {isEditable: user.userID === data.account_id, typeResult: data.type} : ''"/>
       <hr>
-      <span>Assignee</span>
-      <p style="color:grey">{{data.assigned_to ? data.assigned_to : 'not assigned resolver'}}</p>
+      <div style="width:100%;">
+        <span>Assignee</span>
+        <br>
+        <span style="color:grey">{{ data ? data.assigned_to ? data.assigned_to : 'no assigned resolver' : 'no assigned resolver'}}</span> <i class="fa fa-plus" aria-hidden="true" style="float:right"></i>
+      </div>
       <hr>
       <span>Status</span>
-      <p style="color:grey">{{data.status}}</p>
+      <p style="color:grey">{{ data ? data.status : 'not available'}}</p>
       </div>
     </div>
   </div>
@@ -47,11 +70,11 @@
 </template>
 <script>
 import ROUTER from 'src/router'
-import MultipleImgUploader from './MultipleImgUploader'
 import AUTH from 'src/services/auth'
 import TimeInterval from './TimeInterval.js'
 import TicketType from './TicketTypes.js'
 import TicketTypeComp from './TicketType.vue'
+import CONFIG from 'src/config.js'
 
 export default {
   created() {
@@ -62,22 +85,33 @@ export default {
   data() {
     return {
       user: AUTH.user,
+      config: CONFIG,
       imageList: [],
-      data: [],
+      data: null,
       timeInterval: TimeInterval,
       title: null,
       detail: null,
       status: null,
       ticketType: TicketType.types,
       timeIntervalRes: null,
-      editable: true
+      editable: true,
+      imgListLimit: 4
     }
   },
   components: {
-    'multiple-img-uploader': MultipleImgUploader,
-    'ticket-type': TicketTypeComp
+    'ticket-type': TicketTypeComp,
+    'browse-images-modal': require('components/increment/generic/image/BrowseModal.vue')
   },
   methods: {
+    manageImageUrl(url) {
+      this.imageList.push(url)
+    },
+    showImages(){
+      $('#browseImagesModal').modal('show')
+    },
+    hideImages(){
+      $('#browseImagesModal').modal('hide')
+    },
     redirect(path){
       ROUTER.push(path)
     },
@@ -116,24 +150,6 @@ export default {
         }
       })
     },
-    // ticketTypeBackgroundColor(item) {
-    //   var color = ''
-    //   this.ticketType.forEach(element => {
-    //     if(item === element.type){
-    //       color = element.color
-    //     }
-    //   })
-    //   return color
-    // },
-    // ticketTypeColor(item) {
-    //   var color = ''
-    //   this.ticketType.forEach(element => {
-    //     if(item === element.type){
-    //       color = element.textColor
-    //     }
-    //   })
-    //   return color
-    // },
     getticketTimePassed(time){
       var ticketCreation = new Date(time)
       var current = new Date()
@@ -166,9 +182,44 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "~assets/style/colors.scss";
+#deleteBtn{
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border-radius: 20px;
+}
+#imgListPreview {
+  width:100%;
+  background-color:  rgba(0,0,0,.15);
+  height: 200px;
+}
+#imgPreview {
+  width:100%;
+  border: 1px solid white;
+  height: 200px;
+}
+
+#imgNotExist, #imgNotExist i {
+  color:grey;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.row{
+  margin:auto;
+}
+.col-md-9 {
+    padding-left: 0 !important;
+    // padding-right: 0 !important;
+  }
+.col-md-3 {
+  padding-right: 0 !important;
+}
 #holder {
   margin-top: 50px;
-  width: 98%;
 }
 #title {
   font-size: 24px;

@@ -1,4 +1,4 @@
-<template>
+  <template>
   <div class="d-flex"> 
             
     <div class="col-7 preview d-flex justify-content-center align-items-center" 
