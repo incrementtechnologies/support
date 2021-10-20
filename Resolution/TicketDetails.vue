@@ -1,29 +1,15 @@
 <template>
   <div id="holder">
     <div class="title" style="margin-top: 25px;">
-      <label class="text-primary action-link" @click="redirect('/tickets')"><i class="fas fa-arrow-left"></i> <b> back </b>to previous</label>
+      <label class="text-primary action-link" @click="redirect('/tickets/' + originalStatus)"><i class="fas fa-arrow-left"></i> <b> back </b>to previous</label>
     </div>
     <span v-if="data.length !== 0">
     <span id="title">#{{data.id}} <b>{{data.title}}</b></span>
-      <!-- <br><span>{{status}} {{ timeIntervalRes + ' ago'}} by {{data.account_id}}</span> -->
     </span>
     <div class="row" >
       <div class="col-6" id="detail">
-        <!-- <form> -->
-          <!-- <div class="form-group">
-            <label for="text"><b>Title</b></label>
-            <label id="text">{{title}}</label> -->
-            <!-- <input type="text" class="form-control" v-model="title" id="text"> -->
-          <!-- </div> -->
-          <!-- <div class="form-group"> -->
             <label for="pwd"><b>Details</b></label>
             <p type="password"  id="pwd">{{ detail }}</p>
-          <!-- </div> -->
-          <!-- <span><b>Image attachments</b></span><br> -->
-
-          <!-- <multiple-img-uploader  v-if="data.length !== 0" :imageList="imageList" :isEditableProp="editable"/> -->
-
-        <!-- </form> -->
       <div  id="uneditableDetail">
         <div>
           <ticket-type v-if="data.length !== 1" :isEditable="{isEditable: user.userID === data.account_id, typeResult: data.type}"/>
@@ -139,9 +125,6 @@ export default {
           this.data = response.data[0]
           this.originalStatus = this.data.status
           this.timeIntervalRes = this.getticketTimePassed(this.data.created_at)
-          // if(this.data.images !== null) {
-          //   this.imageList = this.data.images.split(' ')
-          // }
           this.editable = this.user.userID === this.data.account_id
           this.statusSelected = this.data.status.toLowerCase()
           switch(this.data.status.toLowerCase()){

@@ -1,12 +1,5 @@
 <template>
 <div class="holder">
-  <!-- <button
-    class="btn btn-primary pull-right"
-    style="margin-bottom: 25px; float:right"
-    @click="createTicket()">
-    <i class="fa fa-plus"></i>
-    New Issue Ticket
-  </button> -->
   <basic-filter
       v-bind:category="category"
       :activeCategoryIndex="0"
@@ -22,49 +15,74 @@
     v-if="data.length > 0"
   />
 
-  <ticket-table :ticketData="data" ref="ticketTable"/>
+  <table class="table " id="myIssues">
+    <thead>
+      <tr class="d-flex border">
+        <th class="col-2"
+          id="typeBtn"
+          v-for="(ticket,index) in tickets" :key="index"
+          :class="{'active':(ticket.status === currentTicket)}"
+          @click="activate(ticket)"
+          >
+          <span id="type">{{ticket.status}}</span>
+
+        </th>
+      </tr>
+    </thead>
+      <tbody>
+        <tr class="d-flex border" v-for="(item, index) in data" :key="index">
+            <td class="col-9"  @click="retrieveItems(item)" style="cursor:pointer;">
+              <div class="d-flex">
+                <div>
+                  <span>
+                    #{{item.id}} <b>{{ item.title }}</b>
+                  </span>
+
+                  <button
+                    disabled
+                    :style="{backgroundColor: ticketTypeBackgroundColor(item.type), color: ticketTypeColor(item.type)}"
+                    >{{item.type}}
+                  </button>
+                </div>
+              </div>
+            </td>
+        </tr>
+      </tbody>
+    </table>
   <messenger v-if="auth.messenger.data !== null"></messenger>
 </div>
 </template>
 
 <script>
-import TableTicket from './TicketTable.vue'
 import Pager from 'components/increment/generic/pager/Pager.vue'
-// import Create from './CreateIssue.vue'
 import FilterIssue from './FilterIssue.vue'
 import AUTH from 'src/services/auth'
 import ROUTER from 'src/router'
-
+import TicketType from './TicketTypes.js'
 export default {
   name: 'ticket',
   components: {
     'basic-filter': require('components/increment/generic/filter/Basic.vue'),
-    // 'create': Create,
-    'ticket-table': TableTicket,
     Pager,
     'filter-issue': FilterIssue,
     'messenger': require('components/increment/messengervue/overlay/Holder.vue')
   },
   created() {
-    this.statusType = 'PENDING'
-    this.retrieve({created_at: 'desc'}, {column: 'created_at', value: ''})
     this.auth.messenger.data = null
   },
   mounted(){
     if(this.$route.params.status){
-      this.statuss = this.$route.params && this.$route.params.status ? this.$route.params.status.toUpperCase() : 'PENDING'
-      this.$refs.ticketTable.currentTicket = {status: this.statuss, value: null}
-      this.statusType = this.statuss
-      this.retrieve({created_at: 'desc'}, {column: 'created_at', value: ''}, this.statuss)
+      this.status = this.$route.params && this.$route.params.status ? this.$route.params.status.toUpperCase() : 'PENDING'
+      this.retrieve({created_at: 'desc'}, {column: 'created_at', value: ''}, this.status)
     }else{
-      this.statuss = null
-      this.$refs.ticketTable.currentTicket = {status: 'PENDING', value: null}
+      this.status = null
+      this.retrieve({created_at: 'desc'}, {column: 'created_at', value: ''})
     }
   },
   data(){
     return {
       data: [],
-      statuss: null,
+      status: null,
       user: AUTH.user,
       auth: AUTH,
       limit: 5,
@@ -73,7 +91,6 @@ export default {
       currentSort: null,
       numPages: null,
       offset: 0,
-      statusType: '',
       sort: null,
       filter: null,
       category: [{
@@ -111,16 +128,52 @@ export default {
           payload: 'created_at',
           payload_value: 'desc'
         }]
-      }]
+      }],
+      tickets: [{
+        status: 'PENDING',
+        value: null
+      }, {
+        status: 'OPEN',
+        value: null
+      }, {
+        status: 'CLOSED',
+        value: null
+      }],
+      currentTicket: 'PENDING',
+      ticketType: TicketType.types
     }
   },
   methods: {
-    createTicket() {
-      ROUTER.push('/tickets/create/')
+    ticketTypeBackgroundColor(item) {
+      var color = ''
+      this.ticketType.forEach(element => {
+        if(item === element.type){
+          color = element.color
+        }
+      })
+      return color
+    },
+    ticketTypeColor(item) {
+      var color = ''
+      this.ticketType.forEach(element => {
+        if(item === element.type){
+          color = element.textColor
+        }
+      })
+      return color
+    },
+    retrieveItems(item){
+      ROUTER.push('/tickets/details/' + item.id)
+    },
+    activate(ticket) {
+      this.currentTicket = ticket.status
+      this.retrieve({created_at: 'desc'}, {column: 'created_at', value: ''}, ticket.status)
+
     },
     retrieve(sort, filter, status = 'PENDING') {
-      console.log(this.$refs)
-      this.$refs.ticketTable.currentTicket = {status: status, value: null}
+      if(this.status) {
+        this.currentTicket = this.status
+      }
       if(sort !== null){
         this.sort = sort
       }
@@ -155,13 +208,11 @@ export default {
         if(response.data.length > 0){
           this.data = response.data
           this.numPages = parseInt(response.size / this.limit) + (response.size % this.limit ? 1 : 0)
+        } else {
+          this.data = []
         }
       })
     }
-    // showMessage(item, index){
-    //   AUTH.messenger.title = item.code
-    //   AUTH.messenger.data = item
-    // }
   }
 }
 </script>
@@ -173,5 +224,44 @@ export default {
   margin-right: 2%;
   margin-top: 25px;
   margin-bottom: 50px;
+}
+#myIssues {
+    width: 100%;
+}
+#myIssues thead:first-child th {
+  font-weight: normal;
+  cursor: pointer;
+}
+#typeBtn.active {
+  font-weight:500 !important;
+  border-bottom: solid $primary 1px;
+}
+#myIssues thead:first-child th:first-child span{
+  margin-right: 20px;
+}
+#myIssues thead:first-child th:first-child span svg{
+  margin-right: 5px;
+}
+
+svg{
+  margin-top: 5px;
+  margin-right: 10px;
+}
+#myIssues tbody tr, thead tr{
+  border-radius: 10px;
+}
+#myIssues tbody tr {
+    min-height: 70px;
+    margin-top: 10px;
+  }
+#myIssues tbody tr td div span {
+  margin-right: 10px;
+}
+
+#myIssues tbody tr td div button{
+  border-radius: 20px;
+  height: 25px;
+  min-width: 60px;
+  border:0;
 }
 </style>
