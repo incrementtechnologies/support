@@ -1,50 +1,42 @@
 <template>
-<div id="holder"> 
-  <div class="title" style="margin-top: 25px;">
-    <label class="text-primary action-link" @click="redirect('/tickets')"><b> back </b>to previous</label>
-  </div>
-  <span v-if="data != null">
-    <span id="title"><b>{{title}}</b>#{{data.id}}</span>
-      <br><span>{{status}} {{ timeIntervalRes + ' ago'}} by {{data.account_id}}</span>
+  <div id="holder">
+    <div class="title" style="margin-top: 25px;">
+      <label class="text-primary action-link" @click="redirect('/tickets/' + originalStatus)"><i class="fas fa-arrow-left"></i> <b> back </b>to previous</label>
+    </div>
+    <span v-if="data.length !== 0">
+    <span id="title">#{{data.id}} <b>{{data.title}}</b></span>
     </span>
-   <div class="row" >
-    <div class="col-10" id="detail">
-      <form>
-        <div class="form-group">
-          <label for="text"><b>Title</b></label>
-          <input type="text" class="form-control" v-model="title" id="text">
+    <div class="row" >
+      <div class="col-6" id="detail">
+            <label for="pwd"><b>Details</b></label>
+            <p type="password"  id="pwd">{{ detail }}</p>
+      <div  id="uneditableDetail">
+        <div>
+          <ticket-type v-if="data.length !== 1" :isEditable="{isEditable: user.userID === data.account_id, typeResult: data.type}"/>
+          <hr>
+          <br>
+          <span>Assignee</span>
+          <br>
+          <br>
+          <p @click="showAssignees()" style="color:grey; cursor: pointer;"><b><u><i class="fas fa-user-plus"></i>&nbsp;&nbsp;{{ assignee != null ? assignee : data.assignTo != null ? data.assignTo.username : 'Add assignee resolver'}}</u></b></p>
+          <assignees ref="assign" :isAssigned="data.assignTo"></assignees>
+          <hr>
+          <br>
+          <span>Status</span>
+          <select :required="true" class="form-control" v-model="data.status">
+            <option v-for="(option, index) in options" :selected="data.status" v-bind:key="index">{{option.name}}</option>
+          </select>
         </div>
-        <div class="form-group">
-          <label for="pwd"><b>Details</b></label>
-          <textarea type="password" v-model="detail" class="form-control"  id="pwd"/>
-        </div>
-        <span><b>Image attachments</b></span><br>
-
-        <multiple-img-uploader  v-if="data != null" :imageList="imageList" :isEditableProp="editable"/>   
-        <button type="button" class="btn btn-primary" id="update">update</button>
-
-      </form>
-    </div>
-    <div class="col-2" id="uneditableDetail">
-      <div>
-        <ticket-type v-if="data != null" :isEditable="{isEditable: user.userID === data.account_id, typeResult: data.type}"/>
-        <!-- <span>Label</span><br>
-        <button 
-        disabled 
-        :style="{backgroundColor: ticketTypeBackgroundColor(data.type), color: ticketTypeColor(data.type)}">
-         {{data.type}}
-        </button> -->
-      <hr>
-      <span>Assignee</span>
-      <p style="color:grey">{{data.assigned_to ? data.assigned_to : 'not assigned resolver'}}</p>
-      <hr>
-      <span>Status</span>
-      <p style="color:grey">{{data.status}}</p>
       </div>
+      <br>
+      <button type="button" class="btn btn-primary mb-5" @click="update()" id="update">Update</button>
+    </div>
+    <br>
+    <div class="col-6">
+      <comments v-if="data !== null" :id="data.id"/>
+    </div>
     </div>
   </div>
-</div>
- 
 </template>
 
 <script>
@@ -54,33 +46,67 @@ import AUTH from 'src/services/auth'
 import TimeInterval from './TimeInterval.js'
 import TicketType from './TicketTypes.js'
 import TicketTypeComp from './TicketType.vue'
+import Comments from './Comments.vue'
 
 export default {
   created() {
-    this.retrieveItem(this.id)
+    this.retrieveItem(this.$route.params.id)
   },
-  mounted(){
-  },
-  props: ['id'],
   data() {
     return {
       user: AUTH.user,
       imageList: [],
       data: [],
+      originalStatus: null,
       timeInterval: TimeInterval,
       title: null,
       detail: null,
       status: null,
       ticketType: TicketType.types,
       timeIntervalRes: null,
-      editable: true
+      editable: true,
+      parameter: {
+        image: null
+      },
+      assignee: null,
+      assigned: null,
+      options: [
+        {
+          name: 'OPEN'
+        },
+        {
+          name: 'PENDING'
+        },
+        {
+          name: 'CLOSED'
+        }
+      ]
     }
   },
   components: {
     'multiple-img-uploader': MultipleImgUploader,
-    'ticket-type': TicketTypeComp
+    'ticket-type': TicketTypeComp,
+    'assignees': require('./Assignees.vue'),
+    'comments': Comments
   },
   methods: {
+    showAssignees(){
+      this.$refs.assign.retrieveAssignees()
+    },
+    update() {
+      let parameter = {
+        ticket_id: this.$route.params.id,
+        assigned_to: this.assigned,
+        status: this.data.status
+      }
+      $('#loading').css({display: 'block'})
+      this.APIRequest('tickets/update_assign', parameter).then(response => {
+        $('#loading').css({display: 'none'})
+        if(response.data === true) {
+          this.redirect('/tickets/' + this.originalStatus.toLowerCase())
+        }
+      })
+    },
     redirect(path){
       ROUTER.push(path)
     },
@@ -97,10 +123,10 @@ export default {
         $('#loading').css({display: 'none'})
         if(response.data.length > 0){
           this.data = response.data[0]
+          this.originalStatus = this.data.status
           this.timeIntervalRes = this.getticketTimePassed(this.data.created_at)
-          this.data.status = this.data.status.toLowerCase()
-          this.imageList = JSON.parse(this.data.images)
           this.editable = this.user.userID === this.data.account_id
+          this.statusSelected = this.data.status.toLowerCase()
           switch(this.data.status.toLowerCase()){
             case 'open':
               this.status = 'opened'
@@ -115,35 +141,16 @@ export default {
           this.title = this.data.content[0] === '{' ? JSON.parse(this.data.content).title : this.data.content
           this.detail = this.data.content[0] === '{' ? JSON.parse(this.data.content).detail : this.data.content
         }else{
-          this.data = null
+          this.data = []
         }
       })
     },
-    // ticketTypeBackgroundColor(item) {
-    //   var color = ''
-    //   this.ticketType.forEach(element => {
-    //     if(item === element.type){
-    //       color = element.color
-    //     }
-    //   })
-    //   return color
-    // },
-    // ticketTypeColor(item) {
-    //   var color = ''
-    //   this.ticketType.forEach(element => {
-    //     if(item === element.type){
-    //       color = element.textColor
-    //     }
-    //   })
-    //   return color
-    // },
     getticketTimePassed(time){
       var ticketCreation = new Date(time)
       var current = new Date()
       var difference = (current - ticketCreation)
       let result = this.timeInterval.getticketTimePassed(difference)
       let timePassedFormat = ''
-      console.log(difference, result)
       if(result.length === 1) {
         timePassedFormat += result[0].interval + ' ' + result[0].unit + (result[0].interval > 1 ? 's' : '')
         return timePassedFormat

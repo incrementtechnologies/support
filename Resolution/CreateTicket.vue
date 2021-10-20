@@ -1,8 +1,7 @@
 <template>
-<!-- style="background-color:red" -->
-<div id="holder"> 
+<div id="holder">
   <div class="title" style="margin-top: 25px;">
-    <label class="text-primary action-link" @click="redirect('/tickets')"><b> back </b>to previous</label>
+    <label class="text-primary action-link" @click="redirect('/tickets')"><i class="fas fa-arrow-left"></i> <b> back </b>to previous</label>
   </div>
   <div v-if="data">
     <span id="title"> <b> {{title}} </b> #{{data.id}} </span>
@@ -23,32 +22,10 @@
           <label for="detail"><b>Details</b></label>
           <textarea type="text" v-model="detail" placeholder="Enter ticket description"  class="form-control"  id="detail"/>
         </div>
-        <label><b>Image Attachment</b></label>
-        <div class="form-group">
-        <div id="imgListPreview" class="row">
-            <div 
-            v-for="index in imgListLimit" :key="index" 
-            id="imgPreview" 
-            class="col-3"
-            >
-            <!-- <span class="close">x</span> -->
-              <button type="button" class="btn btn-danger" id="deleteBtn" data-toggle="modal" data-target="#confirm-delete">
-                <i class="fa fa-times"></i>
-              </button>
-              <div v-if="imageList[index]">
-                <img :src="config.BACKEND_URL + imageList[index]" :alt="imageList[index]" style="width:100%;height:100%">
-              </div>
-              <div v-else id="imgNotExist">
-                <i class="fas fa-image"></i><br>
-                no image
-              </div>
-            </div>
-        </div></div>
-        <!-- <browse-images-modal :object="user.profile" v-if="user.profile !== null"></browse-images-modal> -->
-        <browse-images-modal  v-if="user.profile === null"></browse-images-modal>
-        <button class="btn btn-primary custom-block" style="margin-top: 5px;" @click="showImages()">Select from images
-        </button>                        
-        <button type="button" class="btn btn-primary" id="update">{{data ? 'update' : 'submit'}}</button>
+        <span><b>Image attachments</b></span><br>
+
+        <multiple-img-uploader :imageList="imageList" :isEditableProp="editable"/>
+        <button type="button" class="btn btn-primary mb-5" @click="create()" id="update">Submit</button>
       </form>
     </div>
     <div class="col-md-3 " id="uneditableDetail">
@@ -58,7 +35,8 @@
       <div style="width:100%;">
         <span>Assignee</span>
         <br>
-        <span style="color:grey">{{ data ? data.assigned_to ? data.assigned_to : 'no assigned resolver' : 'no assigned resolver'}}</span> <i class="fa fa-plus" aria-hidden="true" style="float:right"></i>
+        <assignees ref="assign"></assignees>
+        <span @click="showAssignees()" style="color:grey; cursor: pointer;"><u><i class="fas fa-user-plus"></i>&nbsp;&nbsp;{{ assignee ? assignee : 'Add assigned resolver'}}</u></span>
       </div>
       <hr>
       <span>Status</span>
@@ -69,19 +47,16 @@
 </div>
 </template>
 <script>
+import MultipleImgUploader from './MultipleImgUploader'
 import ROUTER from 'src/router'
 import AUTH from 'src/services/auth'
 import TimeInterval from './TimeInterval.js'
 import TicketType from './TicketTypes.js'
 import TicketTypeComp from './TicketType.vue'
 import CONFIG from 'src/config.js'
+import Comments from './Comments.vue'
 
 export default {
-  created() {
-    // this.retrieveItem(this.id)
-  },
-  mounted(){
-  },
   data() {
     return {
       user: AUTH.user,
@@ -95,60 +70,45 @@ export default {
       ticketType: TicketType.types,
       timeIntervalRes: null,
       editable: true,
-      imgListLimit: 4
+      imgListLimit: 4,
+      parameter: {
+        type: null
+      },
+      assignee: null
     }
   },
   components: {
     'ticket-type': TicketTypeComp,
-    'browse-images-modal': require('components/increment/generic/image/BrowseModal.vue')
+    'multiple-img-uploader': MultipleImgUploader,
+    'assignees': require('./Assignees.vue'),
+    Comments
   },
   methods: {
+    showAssignees(){
+      this.$refs.assign.retrieveAssignees()
+    },
+    create() {
+      let parameter = {
+        content: this.title,
+        type: this.parameter.type,
+        account_id: this.user.userID,
+        images: this.imageList.join(' '),
+        assigned_to: this.assignee,
+        status: 'pending'
+      }
+      $('#loading').css({display: 'block'})
+      this.APIRequest('tickets/create', parameter).then(response => {
+        $('#loading').css({display: 'none'})
+        if(response.data > 0){
+          this.redirect('/tickets')
+        }
+      })
+    },
     manageImageUrl(url) {
       this.imageList.push(url)
     },
-    showImages(){
-      $('#browseImagesModal').modal('show')
-    },
-    hideImages(){
-      $('#browseImagesModal').modal('hide')
-    },
     redirect(path){
       ROUTER.push(path)
-    },
-    retrieveItem(id){
-      let parameter = {
-        condition: [{
-          value: id,
-          column: 'id',
-          clause: '='
-        }]
-      }
-      $('#loading').css({display: 'block'})
-      this.APIRequest('tickets/retrieve', parameter).then(response => {
-        $('#loading').css({display: 'none'})
-        if(response.data.length > 0){
-          this.data = response.data[0]
-          this.timeIntervalRes = this.getticketTimePassed(this.data.created_at)
-          this.data.status = this.data.status.toLowerCase()
-          this.imageList = JSON.parse(this.data.images)
-          this.editable = this.user.userID === this.data.account_id
-          switch(this.data.status.toLowerCase()){
-            case 'open':
-              this.status = 'opened'
-              break
-            case 'pending':
-              this.status = 'moved to pending status'
-              break
-            case 'close':
-              this.status = 'closed'
-              break
-          }
-          this.title = this.data.content[0] === '{' ? JSON.parse(this.data.content).title : this.data.content
-          this.detail = this.data.content[0] === '{' ? JSON.parse(this.data.content).detail : this.data.content
-        }else{
-          this.data = null
-        }
-      })
     },
     getticketTimePassed(time){
       var ticketCreation = new Date(time)
