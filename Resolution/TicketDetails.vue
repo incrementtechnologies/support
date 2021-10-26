@@ -5,6 +5,7 @@
     </div>
     <span v-if="data.length !== 0">
     <span id="title">#{{data.id}} <b>{{data.title}}</b></span>
+    <p style="margin-bottom: 25px;"><i>Issued at: {{data.created_at}}</i></p>
     </span>
     <div class="row" >
       <div class="col-6" id="detail">

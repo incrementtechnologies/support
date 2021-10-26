@@ -45,6 +45,7 @@
                   </button>
                 </div>
               </div>
+              <p style="font-size: 12px;">{{item.created_at}}</p>
             </td>
         </tr>
       </tbody>
@@ -263,5 +264,10 @@ svg{
   height: 25px;
   min-width: 60px;
   border:0;
+}
+
+.col-9 {
+  padding: 10px;
+  padding-left: 15px;
 }
 </style>
