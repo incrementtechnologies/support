@@ -61,6 +61,12 @@ export default {
       textColor: 'white'
     },
     {
+      type: 'UPDATE PLAN ISSUE',
+      color: 'violet',
+      description: 'Having trouble or encountered issues in updating your plan? Create a ticket to raise an issue and communicate with PayHiram Support for it to be addressed.',
+      textColor: 'white'
+    },
+    {
       type: 'OTHERS',
       color: 'green',
       description: 'Having trouble or did encountered issues in other matters? Create issues here and communicate with Payhiram Administrator for the said issue to be addressed.',
