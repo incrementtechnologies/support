@@ -5,7 +5,7 @@
     </div>
     <span v-if="data.length !== 0">
     <span id="title">#{{data.id}} <b>{{data.title}}</b></span>
-    <p style="margin-bottom: 25px;"><i>Issued at: {{data.created_at}}</i></p>
+    <p style="margin-bottom: 25px;">Issued by: <b>{{data.name}}</b>&nbsp;&nbsp;&nbsp;Issued at: <b>{{data.created_at}}</b></p>
     </span>
     <div class="row" >
       <div class="col-6" id="detail">
@@ -141,6 +141,7 @@ export default {
           }
           this.title = this.data.content[0] === '{' ? JSON.parse(this.data.content).title : this.data.content
           this.detail = this.data.content[0] === '{' ? JSON.parse(this.data.content).detail : this.data.content
+          console.log('diara day', this.data)
         }else{
           this.data = []
         }
@@ -180,6 +181,7 @@ export default {
 #holder {
   margin-top: 50px;
   width: 98%;
+  float: right;
 }
 #title {
   font-size: 24px;

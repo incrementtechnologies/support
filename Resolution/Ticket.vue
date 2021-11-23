@@ -45,7 +45,7 @@
                   </button>
                 </div>
               </div>
-              <p style="font-size: 12px;">{{item.created_at}}</p>
+              <p style="font-size: 12px;">{{item.created_at}} by <b>{{item.name}}</b></p>
             </td>
         </tr>
       </tbody>
